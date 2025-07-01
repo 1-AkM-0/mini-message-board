@@ -1,10 +1,23 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-module.exports = new Pool({
-  host: "localhost",
-  user: `${process.env.USERNAME}`,
-  database: "message_board",
-  password: `${process.env.DATABASE_PASSWORD}`,
-  port: 5432,
-});
+let pool;
+
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+} else {
+  pool = new Pool({
+    host: "localhost",
+    user: process.env.DB_USER,
+    database: "message_board",
+    password: process.env.DB_PASSWORD,
+    port: 5432,
+  });
+}
+
+module.exports = pool;
